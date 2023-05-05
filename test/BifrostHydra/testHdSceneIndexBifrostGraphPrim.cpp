@@ -20,8 +20,8 @@
 
 // Bifrost
 #include <Bifrost/Object/Object.h>
-#include <bifrost_geometry.h>
-#include <bifrost_what_is.h>
+#include <Bifrost/Geometry/bifrost_geometry.h>
+#include <bifrost_object/bifrost_what_is.h>
 
 // Bifrost USD
 #include <utils/test/testUtils.h>

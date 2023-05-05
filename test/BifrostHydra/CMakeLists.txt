@@ -24,9 +24,9 @@ add_subdirectory(testUtils)
 
 set(libs
     Amino::Core
-    InternalBifrost::AminoSDK
-    InternalBifrost::Geometry
-    InternalBifrost::BIFObject
+    Amino::SDK::Preview
+    Bifrost::Geometry::Preview
+    Bifrost::VTT::Preview
     BifrostGraph::Executor
     BifrostHdTranslators
     BifrostHdEngine

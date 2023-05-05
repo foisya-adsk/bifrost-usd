@@ -148,8 +148,7 @@ include(${BIFUSD_TOOLS_DIR}/gtest.cmake)
 # Import/Find installed packages
 #==============================================================================
 
-find_package(Bifrost REQUIRED SDK)
-find_package(InternalBifrost REQUIRED)
+find_package(BifrostPreview REQUIRED SDK)
 find_package(USD REQUIRED)
 
 #==============================================================================
