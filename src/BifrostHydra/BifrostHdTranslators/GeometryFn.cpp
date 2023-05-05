@@ -16,8 +16,8 @@
 
 #include <BifrostHydra/Translators/GeometryFn.h>
 
-#include <bifrost_geometry.h>
-#include <bifrost_what_is.h>
+#include <Bifrost/Geometry/bifrost_geometry.h>
+#include <bifrost_object/bifrost_what_is.h>
 
 #include <pxr/base/gf/quath.h>
 #include <pxr/base/gf/rotation.h>
@@ -37,7 +37,7 @@
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
-using BifrostGeoIndices  = Amino::Array<BifrostExp::Geometry::Index>;
+using BifrostGeoIndices  = Amino::Array<Bifrost::Geometry::Index>;
 using BifrostFloat3Array = Amino::Array<Bifrost::Math::float3>;
 
 namespace {
@@ -46,7 +46,7 @@ VtVec3fArray GetVec3fArray(const Bifrost::Object& object,
                            const Amino::String&   name) {
     VtVec3fArray result;
     const auto   data =
-        BifrostExp::getDataGeoPropValues<Bifrost::Math::float3>(object, name);
+        Bifrost::Geometry::getDataGeoPropValues<Bifrost::Math::float3>(object, name);
     if (data) {
         result.reserve(data->size());
 
@@ -60,7 +60,7 @@ VtVec3fArray GetVec3fArray(const Bifrost::Object& object,
 VtIntArray GetIntArray(const Bifrost::Object& object,
                        const Amino::String&   name) {
     VtIntArray result;
-    auto data = BifrostExp::getDataGeoPropValues<BifrostExp::Geometry::Index>(
+    auto data = Bifrost::Geometry::getDataGeoPropValues<Bifrost::Geometry::Index>(
         object, name);
 
     if (data) {
@@ -169,8 +169,8 @@ HdContainerDataSourceHandle BuildMeshPrimvarsDataSource(
 HdContainerDataSourceHandle BuildMeshTopologyDataSource(
     const Bifrost::Object& object) {
     auto face_offsets =
-        BifrostExp::getDataGeoPropValues<BifrostExp::Geometry::Index>(
-            object, BifrostExp::Geometry::sFaceOffsets);
+        Bifrost::Geometry::getDataGeoPropValues<Bifrost::Geometry::Index>(
+            object, Bifrost::Geometry::sFaceOffsets);
 
     if (!face_offsets) {
         return nullptr;
@@ -182,7 +182,7 @@ HdContainerDataSourceHandle BuildMeshTopologyDataSource(
         IntArrayDataSource::New(BifrostOffsetsToUsdVertexCount(face_offsets));
 
     IntArrayDataSource::Handle fviDs = IntArrayDataSource::New(
-        GetIntArray(object, BifrostExp::Geometry::sFaceVertices));
+        GetIntArray(object, Bifrost::Geometry::sFaceVertices));
 
     return HdMeshSchema::Builder()
         .SetTopology(HdMeshTopologySchema::Builder()
@@ -195,8 +195,8 @@ HdContainerDataSourceHandle BuildMeshTopologyDataSource(
 HdContainerDataSourceHandle BuildBasisCurveTopologyDataSource(
     const Bifrost::Object& object) {
     auto strands_offsets =
-        BifrostExp::getDataGeoPropValues<BifrostExp::Geometry::Index>(
-            object, BifrostExp::Geometry::sStrandOffsets);
+        Bifrost::Geometry::getDataGeoPropValues<Bifrost::Geometry::Index>(
+            object, Bifrost::Geometry::sStrandOffsets);
 
     if (!strands_offsets) {
         return nullptr;
@@ -208,7 +208,7 @@ HdContainerDataSourceHandle BuildBasisCurveTopologyDataSource(
         BifrostOffsetsToUsdVertexCount(strands_offsets));
 
     IntArrayDataSource::Handle ciDs = IntArrayDataSource::New(
-        GetIntArray(object, BifrostExp::Geometry::sFaceVertices));
+        GetIntArray(object, Bifrost::Geometry::sFaceVertices));
 
     return HdBasisCurvesSchema::Builder()
         .SetTopology(HdBasisCurvesTopologySchema::Builder()
@@ -424,16 +424,16 @@ bool AddScalarArrayToMesh(const Amino::String&                name,
 
     if (data.size() > 0) {
         auto obj = Bifrost::createObject();
-        BifrostExp::populateDataGeoProp<T>(T{}, *obj);
-        obj->setProperty(BifrostExp::Geometry::sTarget,
-                         BifrostExp::Geometry::sPointComp);
+        Bifrost::Geometry::populateDataGeoProp<T>(T{}, *obj);
+        obj->setProperty(Bifrost::Geometry::sTarget,
+                         Bifrost::Geometry::sPointComp);
         mesh.setProperty(name, std::move(obj));
 
         auto array = Amino::newMutablePtr<Amino::Array<T>>(data.size());
         for (size_t i = 0; i < data.size(); ++i) {
             (*array)[i] = data[i];
         }
-        BifrostExp::setDataGeoPropValues(name, array.toImmutable(), mesh);
+        Bifrost::Geometry::setDataGeoPropValues(name, array.toImmutable(), mesh);
         return true;
     }
     return false;
@@ -448,9 +448,9 @@ bool AddVec3ArrayToMesh(const Amino::String&                name,
 
     if (data.size() > 0) {
         auto obj = Bifrost::createObject();
-        BifrostExp::populateDataGeoProp<T2>(T2{}, *obj);
-        obj->setProperty(BifrostExp::Geometry::sTarget,
-                         BifrostExp::Geometry::sPointComp);
+        Bifrost::Geometry::populateDataGeoProp<T2>(T2{}, *obj);
+        obj->setProperty(Bifrost::Geometry::sTarget,
+                         Bifrost::Geometry::sPointComp);
         mesh->setProperty(name, std::move(obj));
 
         auto array = Amino::newMutablePtr<Amino::Array<T2>>(data.size());
@@ -459,7 +459,7 @@ bool AddVec3ArrayToMesh(const Amino::String&                name,
             (*array)[i].y = data[i][1];
             (*array)[i].z = data[i][2];
         }
-        BifrostExp::setDataGeoPropValues(name, array.toImmutable(), *mesh);
+        Bifrost::Geometry::setDataGeoPropValues(name, array.toImmutable(), *mesh);
         return true;
     }
     return false;
@@ -470,17 +470,17 @@ namespace BifrostHd {
 
 BifrostHdGeoTypes GetGeoType(const Bifrost::Object& object) {
 
-    auto objType = Amino::whatIs(object, BifrostExp::getGeometryTypes());
+    auto objType = Amino::whatIs(object, Bifrost::Geometry::getGeometryTypes());
 
     if(object.empty()) {
         return BifrostHdGeoTypes::Empty;
-    } else if (objType == BifrostExp::getMeshPrototype()) {
+    } else if (objType == Bifrost::Geometry::getMeshPrototype()) {
         return BifrostHdGeoTypes::Mesh;
-    } else if (objType == BifrostExp::getStrandPrototype()) {
+    } else if (objType == Bifrost::Geometry::getStrandPrototype()) {
         return BifrostHdGeoTypes::Strands;
-    } else if (objType == BifrostExp::getPointCloudPrototype()) {
+    } else if (objType == Bifrost::Geometry::getPointCloudPrototype()) {
         return BifrostHdGeoTypes::PointCloud;
-    } else if (objType == BifrostExp::getInstancesPrototype()) {
+    } else if (objType == Bifrost::Geometry::getInstancesPrototype()) {
         return BifrostHdGeoTypes::PointCloud;
     }
 
@@ -488,12 +488,12 @@ BifrostHdGeoTypes GetGeoType(const Bifrost::Object& object) {
 }
 
 size_t GetPointCount(const Bifrost::Object& object) {
-    return BifrostExp::getNumberOfElements(object,
-                                           BifrostExp::Geometry::sPointComp);
+    return Bifrost::Geometry::getNumberOfElements(object,
+                                           Bifrost::Geometry::sPointComp);
 }
 
 VtVec3fArray GetPoints(const Bifrost::Object& object) {
-    return GetVec3fArray(object, BifrostExp::Geometry::sPositions);
+    return GetVec3fArray(object, Bifrost::Geometry::sPositions);
 }
 
 VtVec3fArray GetDisplayColor(const Bifrost::Object& object) {
@@ -503,14 +503,14 @@ VtVec3fArray GetDisplayColor(const Bifrost::Object& object) {
 }
 
 VtIntArray GetFaceVertexIndices(const Bifrost::Object& object) {
-    return GetIntArray(object, BifrostExp::Geometry::sFaceVertices);
+    return GetIntArray(object, Bifrost::Geometry::sFaceVertices);
 }
 
 VtFloatArray GetWidth(const Bifrost::Object& object) {
     static const Amino::String kPointSizeStr = "point_size";
     VtFloatArray               result;
     const auto                 data =
-        BifrostExp::getDataGeoPropValues<Amino::float_t>(object, kPointSizeStr);
+        Bifrost::Geometry::getDataGeoPropValues<Amino::float_t>(object, kPointSizeStr);
     if (data) {
         result = {data->begin(), data->end()};
     }
@@ -522,7 +522,7 @@ VtInt64Array GetPointIDs(const Bifrost::Object& object) {
 
     VtInt64Array result;
     const auto   data =
-        BifrostExp::getDataGeoPropValues<Amino::long_t>(object, kPointIDStr);
+        Bifrost::Geometry::getDataGeoPropValues<Amino::long_t>(object, kPointIDStr);
     if (data) {
         result = {data->begin(), data->end()};
     }
@@ -535,7 +535,7 @@ VtInt64Array GetPointInstanceIDs(const Bifrost::Object& object) {
     static const Amino::String kPointInstanceIDStr = "point_instance_id";
 
     VtInt64Array result;
-    const auto   data = BifrostExp::getDataGeoPropValues<Amino::long_t>(
+    const auto   data = Bifrost::Geometry::getDataGeoPropValues<Amino::long_t>(
         object, kPointInstanceIDStr);
     if (data) {
         result = {data->begin(), data->end()};
@@ -680,7 +680,7 @@ Amino::Ptr<Bifrost::Object> CreateBifrostMesh(const HdSceneIndexPrim& prim) {
         }
     }
 
-    BifrostExp::populateMesh(positions.toImmutable(),
+    Bifrost::Geometry::populateMesh(positions.toImmutable(),
                              faceVertices.toImmutable(),
                              faceOffsets.toImmutable(), *mesh);
 

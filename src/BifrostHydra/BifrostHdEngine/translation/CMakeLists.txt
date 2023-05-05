@@ -16,26 +16,43 @@
 #*****************************************************************************
 #+
 
-set(private_libs
-    Amino::Core
-    BifrostGraph::Executor
-    InternalBifrost::AminoSDK
-    BifrostHdEngine
-)
 
 set(src_files
     TypeTranslation.cpp
 )
 
-bifusd_set_extra_rpaths(extra_rpaths)
+add_library(BifrostHdTypeTranslation SHARED ${src_files} )
 
-bifusd_create_shared_lib(
-    BifrostHdTypeTranslation "BIFROST_HD_ENGINE_BUILD_DLL" # TODO: add export file
-    PUBLIC_INSTALL
-    PUBLIC_DEFINITIONS     $<${BIFUSD_IS_MSC}: BOOST_LIB_TOOLSET="vc141">
-    PRIVATE_DEFINITIONS    $<${BIFUSD_IS_DEBUG}: TBB_USE_DEBUG BOOST_DEBUG_PYTHON BOOST_LINKING_PYTHON>
-    PUBLIC_OPTIONS         $<${BIFUSD_IS_MSC}:/wd4251 /wd4273>
-    SRC_FILES              ${src_files}
-    PRIVATE_LINK_LIBS      ${private_libs}
-    EXTRA_RPATH            ${extra_rpaths}
+target_link_libraries( BifrostHdTypeTranslation PUBLIC
 )
+
+target_link_libraries( BifrostHdTypeTranslation PRIVATE
+    BifrostHdEngine
+    Amino::SDK::Preview
+)
+
+install(TARGETS BifrostHdTypeTranslation 
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
+
+
+# set(private_libs
+#     Amino::Core
+#     BifrostGraph::Executor
+#     InternalBifrost::AminoSDK
+#     BifrostHdEngine
+# )
+# 
+# bifusd_set_extra_rpaths(extra_rpaths)
+# 
+# bifusd_create_shared_lib(
+#     BifrostHdTypeTranslation "BIFROST_HD_ENGINE_BUILD_DLL" # TODO: add export file
+#     PUBLIC_INSTALL
+#     PUBLIC_DEFINITIONS     $<${BIFUSD_IS_MSC}: BOOST_LIB_TOOLSET="vc141">
+#     PRIVATE_DEFINITIONS    $<${BIFUSD_IS_DEBUG}: TBB_USE_DEBUG BOOST_DEBUG_PYTHON BOOST_LINKING_PYTHON>
+#     PUBLIC_OPTIONS         $<${BIFUSD_IS_MSC}:/wd4251 /wd4273>
+#     SRC_FILES              ${src_files}
+#     PRIVATE_LINK_LIBS      ${private_libs}
+#     EXTRA_RPATH            ${extra_rpaths}
+# )

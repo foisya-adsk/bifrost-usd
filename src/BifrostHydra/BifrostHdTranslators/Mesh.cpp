@@ -17,8 +17,8 @@
 #include <BifrostHydra/Translators/GeometryFn.h>
 #include <BifrostHydra/Translators/Mesh.h>
 
-#include <bifrost_geometry.h>
-#include <bifrost_what_is.h>
+#include <Bifrost/Geometry/bifrost_geometry.h>
+#include <bifrost_object/bifrost_what_is.h>
 
 #include <pxr/imaging/hd/meshSchema.h>
 #include <pxr/imaging/hd/tokens.h>

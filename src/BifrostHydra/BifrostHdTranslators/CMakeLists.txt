@@ -23,23 +23,15 @@ set(hd_GraphTranslator_headers
     Instances.h
     Strands.h
 )
+file(COPY ${hd_GraphTranslator_headers} DESTINATION ${CMAKE_BINARY_DIR}/common/include/BifrostHydra/Translators )
 
-bifusd_install_headers(
-    hdGraphTranslatorsHeadersInstall
-    SOURCE ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES ${hd_GraphTranslator_headers}
-    DESTINATION "BifrostHydra/Translators"
-)
+add_library( BifrostHdTranslatorsHeaders INTERFACE )
+target_include_directories( BifrostHdTranslatorsHeaders 
+    INTERFACE 
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/common/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> )
 
-set(private_libs
-    Amino::Core
-    Bifrost::Object
-    InternalBifrost::AminoSDK
-    InternalBifrost::Geometry
-    InternalBifrost::BIFObject
-    hd
-    hdGraphTranslatorsHeadersInstall
-)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/common/include/BifrostHydra/Translators DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/BifrostHydra)
 
 set(src_files
     Geometry.cpp
@@ -49,23 +41,60 @@ set(src_files
     Strands.cpp
 )
 
-bifusd_set_extra_rpaths(extra_rpaths)
+add_library( BifrostHdTranslators SHARED ${src_files} )
+target_link_libraries( BifrostHdTranslators PUBLIC
+    BifrostHdTranslatorsHeaders
+    Bifrost::Object::Preview )
 
-bifusd_create_shared_lib(
-    BifrostHdTranslators "USD_BUILD_DLL"
-    PUBLIC_INSTALL
-    PUBLIC_DEFINITIONS      $<${BIFUSD_IS_MSC}: BOOST_LIB_TOOLSET="vc141">
-    PRIVATE_DEFINITIONS     $<${BIFUSD_IS_DEBUG}: TBB_USE_DEBUG BOOST_DEBUG_PYTHON BOOST_LINKING_PYTHON>
-    PRIVATE_OPTIONS         $<${BIFUSD_IS_MSC}:/wd4251 /wd4273>
-                            $<${BIFUSD_IS_CLANG}: 
-                                # 'GetValue' overrides a member function but is not marked 'override' 
-                                # in pxr/imaging/hd/dataSource.h:176:21                                                 
-                                -Wno-suggest-override -Wno-inconsistent-missing-override
-                                # There are some unused member function in pxr/imaging/hd/dataSource.h:65:5
-                                 -Wno-unused-member-function
-                            >
-    SRC_FILES              ${src_files}
-    PRIVATE_LINK_LIBS      ${private_libs}
-    EXTRA_RPATH            ${extra_rpaths}
+target_link_libraries( BifrostHdTranslators PRIVATE 
+    Amino::SDK::Preview
+    Bifrost::Geometry::Preview
+    hd
 )
 
+install(TARGETS BifrostHdTranslators 
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
+
+
+#bifusd_install_headers(
+#    hdGraphTranslatorsHeadersInstall
+#    SOURCE ${CMAKE_CURRENT_SOURCE_DIR}
+#    FILES ${hd_GraphTranslator_headers}
+#    DESTINATION "BifrostHydra/Translators"
+#)
+#
+#set(private_libs
+#    Amino::Core
+#    Bifrost::Object
+#    InternalBifrost::AminoSDK
+#    InternalBifrost::Geometry
+#    InternalBifrost::BIFObject
+#    hd
+#    hdGraphTranslatorsHeadersInstall
+#)
+#
+#
+#
+#bifusd_set_extra_rpaths(extra_rpaths)
+#
+#bifusd_create_shared_lib(
+#    BifrostHdTranslators "USD_BUILD_DLL"
+#    PUBLIC_INSTALL
+#    PUBLIC_DEFINITIONS      $<${BIFUSD_IS_MSC}: BOOST_LIB_TOOLSET="vc141">
+#    PRIVATE_DEFINITIONS     $<${BIFUSD_IS_DEBUG}: TBB_USE_DEBUG BOOST_DEBUG_PYTHON BOOST_LINKING_PYTHON>
+#    PRIVATE_OPTIONS         $<${BIFUSD_IS_MSC}:/wd4251 /wd4273>
+#                            $<${BIFUSD_IS_CLANG}: 
+#                                # 'GetValue' overrides a member function but is not marked 'override' 
+#                                # in pxr/imaging/hd/dataSource.h:176:21                                                 
+#                                -Wno-suggest-override -Wno-inconsistent-missing-override
+#                                # There are some unused member function in pxr/imaging/hd/dataSource.h:65:5
+#                                 -Wno-unused-member-function
+#                            >
+#    SRC_FILES              ${src_files}
+#    PRIVATE_LINK_LIBS      ${private_libs}
+#    EXTRA_RPATH            ${extra_rpaths}
+#)
+#
+#

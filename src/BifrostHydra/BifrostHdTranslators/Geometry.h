@@ -17,13 +17,9 @@
 #ifndef BIFROST_HD_GRAPH_GEOMETRY_H
 #define BIFROST_HD_GRAPH_GEOMETRY_H
 
-#include <Bifrost/Object/Object.h>
-
 #include <pxr/base/tf/denseHashMap.h>
 #include <pxr/imaging/hd/sceneIndex.h>
 #include <pxr/imaging/hd/dataSource.h>
-
-#include <unordered_map>
 
 namespace BifrostHd {
 

@@ -1,6 +1,6 @@
 #-
 #*****************************************************************************
-# Copyright 2022 Autodesk, Inc.
+# Copyright 2023 Autodesk, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,17 @@
 #*****************************************************************************
 #+
 
-set(private_libs
+set(src_files
+    BifrostGraphGenerativeProcedural.cpp
+    BifrostGraphGenerativeProceduralPlugin.cpp
+)
+
+add_library(BifrostHdGraph SHARED ${src_files} )
+
+target_link_libraries( BifrostHdGraph PUBLIC
+)
+
+target_link_libraries( BifrostHdGraph PRIVATE
     Amino::Core
     BifrostHdEngine
     BifrostHdTranslators
@@ -24,29 +34,38 @@ set(private_libs
     hdGp
 )
 
-set(src_files
-    BifrostGraphGenerativeProcedural.cpp
-    BifrostGraphGenerativeProceduralPlugin.cpp
-)
+install(TARGETS BifrostHdGraph 
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
 
-bifusd_set_extra_rpaths(extra_rpaths)
 
-bifusd_create_shared_lib(
-    BifrostHdGraph "USD_BUILD_DLL"
-    PUBLIC_INSTALL
-    PUBLIC_DEFINITIONS     $<${BIFUSD_IS_MSC}: BOOST_LIB_TOOLSET="vc141">
-    PRIVATE_DEFINITIONS    $<${BIFUSD_IS_DEBUG}: TBB_USE_DEBUG BOOST_DEBUG_PYTHON BOOST_LINKING_PYTHON>
-    PUBLIC_OPTIONS         $<${BIFUSD_IS_MSC}:/wd4251 /wd4273>
-    SRC_FILES              ${src_files}
-    PRIVATE_LINK_LIBS      ${private_libs}
-    EXTRA_RPATH            ${extra_rpaths}
-)
+# set(private_libs
+#     Amino::Core
+#     BifrostHdEngine
+#     BifrostHdTranslators
+#     hd
+#     hdGp
+# )
+# 
+# bifusd_set_extra_rpaths(extra_rpaths)
+# 
+# bifusd_create_shared_lib(
+#     BifrostHdGraph "USD_BUILD_DLL"
+#     PUBLIC_INSTALL
+#     PUBLIC_DEFINITIONS     $<${BIFUSD_IS_MSC}: BOOST_LIB_TOOLSET="vc141">
+#     PRIVATE_DEFINITIONS    $<${BIFUSD_IS_DEBUG}: TBB_USE_DEBUG BOOST_DEBUG_PYTHON BOOST_LINKING_PYTHON>
+#     PUBLIC_OPTIONS         $<${BIFUSD_IS_MSC}:/wd4251 /wd4273>
+#     SRC_FILES              ${src_files}
+#     PRIVATE_LINK_LIBS      ${private_libs}
+#     EXTRA_RPATH            ${extra_rpaths}
+# )
 
-set(plugin_info_json ${BIFUSD_OUTPUT_ROOT_DIR}/plugInfo.json)
+set(plugin_info_json ${CMAKE_BINARY_DIR}/plugInfo.json)
 
 configure_file(plugInfo.json.in ${plugin_info_json} @ONLY)
 
 install(
     FILES ${plugin_info_json}
-    DESTINATION "${BIFUSD_INSTALL_COMMON_DIR}/plugin/procedural/resources")
+    DESTINATION "common/plugin/procedural/resources")
 

@@ -16,6 +16,7 @@
 #ifndef BIFROST_HD_GRAPH_INSTANCES_H
 #define BIFROST_HD_GRAPH_INSTANCES_H
 
+#include <Bifrost/Object/Object.h>
 #include <BifrostHydra/Translators/Geometry.h>
 
 namespace BifrostHd {

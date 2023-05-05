@@ -15,7 +15,6 @@
 //+
 
 #include "TypeTranslation.h"
-
 #include <BifrostHydra/Engine/JobTranslationData.h>
 #include <BifrostHydra/Engine/ValueTranslationData.h>
 
