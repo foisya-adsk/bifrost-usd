@@ -32,6 +32,7 @@ BIFUSD_WARNING_DISABLE_MSC(4244)
 BIFUSD_WARNING_DISABLE_MSC(4305)
 BIFUSD_WARNING_DISABLE_MSC(4800)
 
+#include <pxr/base/tf/pathUtils.h> // TfNormPath
 #include <pxr/usd/sdf/copyUtils.h>
 #include <pxr/usd/sdf/fileFormat.h>
 #include <pxr/usd/usd/attribute.h>
@@ -387,14 +388,10 @@ bool Layer::exportToFile(const Amino::String& filePath,
         Amino::String sdfLayerIdentifier = layer.m_filePath.empty() ?
             layer.m_originalFilePath : layer.m_filePath;
         if (relativePath) {
-            Amino::String relPath = "";
-            if (Bifrost::FileUtils::getRelativePath(
-                    sdfLayerIdentifier,
-                    Bifrost::FileUtils::extractParentPath(outFilePath.c_str())
-                        .c_str(),
-                    relPath)) {
-                sdfLayerIdentifier = relPath;
-                std::replace(sdfLayerIdentifier.begin(), sdfLayerIdentifier.end(), '\\', '/');
+            Amino::String parent = Bifrost::FileUtils::extractParentPath(outFilePath.c_str());
+            Amino::String relPath = Bifrost::FileUtils::getRelativePath(sdfLayerIdentifier, parent).c_str();
+            if (!relPath.empty()) {
+                sdfLayerIdentifier = pxr::TfNormPath(relPath.c_str()).c_str();
             }
         }
         if (sdfLayerIdentifier.empty()) {

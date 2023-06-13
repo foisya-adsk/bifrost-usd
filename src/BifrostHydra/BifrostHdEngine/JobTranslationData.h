@@ -17,7 +17,7 @@
 #ifndef BIFROST_HD_ENGINE_JOB_TRANSLATION_DATA_H
 #define BIFROST_HD_ENGINE_JOB_TRANSLATION_DATA_H
 
-#include <BifrostBoardJob.h>
+#include <BifrostGraph/Executor/BifrostBoardJob.h>
 
 #include <memory>
 

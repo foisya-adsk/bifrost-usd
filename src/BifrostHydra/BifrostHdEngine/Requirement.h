@@ -17,7 +17,7 @@
 #ifndef BIFROST_HD_ENGINE_REQUIREMENT_H_
 #define BIFROST_HD_ENGINE_REQUIREMENT_H_
 
-#include <BifrostBoardRuntime.h>
+#include <BifrostGraph/Executor/BifrostBoardRuntime.h>
 
 namespace BifrostHd {
 

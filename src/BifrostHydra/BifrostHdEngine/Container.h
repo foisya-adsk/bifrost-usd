@@ -21,7 +21,7 @@
 #include <BifrostHydra/Engine/Requirement.h>
 #include <BifrostHydra/Engine/Runtime.h>
 
-#include <BifrostBoardJob.h>
+#include <BifrostGraph/Executor/BifrostBoardJob.h>
 
 namespace BifrostHd {
 

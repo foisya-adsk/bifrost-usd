@@ -16,7 +16,7 @@
 
 #include <BifrostHydra/Engine/Runtime.h>
 
-#include <BifrostBoardUtility.h>
+#include <BifrostGraph/Executor/PreviewUtility.h>
 #include <BifrostGraph/Executor/Utility.h>
 
 namespace {
