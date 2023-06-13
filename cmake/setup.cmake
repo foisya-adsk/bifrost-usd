@@ -49,7 +49,7 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     bifusd_required_variables(BIFROST_LOCATION)
     bifusd_required_variables(BIFUSD_PYTHON_EXECUTABLE)
 
-    include(${BIFROST_LOCATION}/sdk/cmake/setup.cmake) 
+    include(${BIFROST_LOCATION}/sdk/cmake/setup.cmake)
 
     if( BIFUSD_IS_WINDOWS)
         # Maya runtime location is optional.
